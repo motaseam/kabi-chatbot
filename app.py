@@ -34,11 +34,21 @@ def cosine_similarity(query, vector):
     magnitudes = np.linalg.norm(query_vector) * np.linalg.norm(vector)  # Compute the product of magnitudes
     return dot_product / magnitudes  # Return cosine similarity
 
-def most_similar(query, n_retrive_required=2):
+def most_similar(query, n_retrieve_required=2):
+    # Calculate similarity for each embedding
     df["Similarity"] = df["Embedding"].apply(lambda vector: cosine_similarity(query, vector))
-    sorted_df = df.sort_values("Similarity", ascending=False).head(n_retrive_required)  # Get the top rows
-    title = " ".join(sorted_df["Title"])  # Combine titles with a space
-    text = " ".join(sorted_df["Text"])    # Combine texts with a space
+    
+    # Sort the dataframe by similarity in descending order
+    sorted_df = df.sort_values("Similarity", ascending=False).head(n_retrieve_required)
+    
+    # Check if the top two similarities are below the threshold of 0.8
+    if sorted_df["Similarity"].iloc[:n_retrieve_required].min() < 0.8:
+        return "Not trained on such data or I am here to help you with KABi details only", None
+    
+    # Combine titles and texts for the top results
+    title = " ".join(sorted_df["Title"])
+    text = " ".join(sorted_df["Text"])
+    
     return title, text
 
 def chat(query):
@@ -61,7 +71,7 @@ def chat(query):
 
 def RAG(query):
     title, text = most_similar(query)
-    prompt = f"answer this query:\n{query}. Use this information only to answer :\n{text}"
+    prompt = f"You are an assistant for KABi Company. Only answer questions directly related to the company. For any unrelated or off-topic questions, respond with a fun and playful answer in one short sentence. Now, answer this query:\n{query}. Use this information only to answer: information:\n{text}, \n\n---if there no information answer only as 'I am sorry I am here it assissit you about KABi'"
     answer = chat(prompt)
     return answer
 
