@@ -47,6 +47,8 @@ def chat(query):
         "model": "llama3.1",
         "messages": [
             {
+                "role": "system",
+                "content": "You are an assistant for KABi Company. Only answer questions directly related to the company. For any unrelated or off-topic questions, respond with a fun and playful answer in one short sentence.",
                 "role": "user",
                 "content": query
             }
