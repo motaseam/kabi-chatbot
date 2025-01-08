@@ -43,7 +43,7 @@ def most_similar(query, n_retrieve_required=2):
     
     # Check if the top two similarities are below the threshold of 0.8
     if sorted_df["Similarity"].iloc[:n_retrieve_required].min() < 0.8:
-        return "Not trained on such data or I am here to help you with KABi details only", None
+        return "KABi details only", None
     
     # Combine titles and texts for the top results
     title = " ".join(sorted_df["Title"])
